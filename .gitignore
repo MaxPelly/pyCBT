@@ -1,0 +1,5 @@
+
+**/.ipynb_checkpoints/*
+src/__pycache__/*
+src/*.py.bak
+src/build/*
