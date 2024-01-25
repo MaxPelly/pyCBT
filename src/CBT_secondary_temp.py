@@ -72,5 +72,5 @@ if __name__ == '__main__':
     island_vol=200e-15
     cbt_secondary = CBT_secondary_temp(C_sigma,R_T)
     R_test=48687.271436
-    print "temp at %g kOhm = %g mK"%(R_test,cbt_secondary.T_func(R_test)*1000)       
+    print("temp at %g kOhm = %g mK"%(R_test,cbt_secondary.T_func(R_test)*1000))       
         

@@ -83,14 +83,14 @@ class CBT_multi_fitter():
             n=n+1
         self.R_T=self.R_T/n
         self.C_sigma=self.C_sigma/n
-        print "Average C_sigma:%g"%self.C_sigma
-        print "Average R_T:%g"%self.R_T
+        print("Average C_sigma:%g"%self.C_sigma)
+        print("Average R_T:%g"%self.R_T)
         # actual fitting
         x1=[self.R_T,self.C_sigma] # initial conditions
         for fitter in self.fitters: # add temperatures to initial conditions
             x1.append(fitter.T_fit)
-        print "Initial vector"
-        print x1
+        print("Initial vector")
+        print(x1)
         # check if multiprocessing is used, does not work in Windows
         if self.multiprocess:
             fit_fcn = self.fit_function_multiprocessing
@@ -104,14 +104,14 @@ class CBT_multi_fitter():
             "Print optimizing with bounds"
             self.xopt = optimize.fmin_l_bfgs_b(fit_fcn, x1, factr=1e7, approx_grad=True, bounds=self.bounds)
 
-        print "xopt:"
-        print self.xopt
-        print "==== After multi optimization: ===="
-        print "R_T = %g"%(self.xopt[0][0])
-        print "C_sigma = %g "%(self.xopt[0][1])
+        print("xopt:")
+        print(self.xopt)
+        print("==== After multi optimization: ====")
+        print("R_T = %g"%(self.xopt[0][0]))
+        print("C_sigma = %g "%(self.xopt[0][1]))
         for idx,T in enumerate(self.xopt[0]):
             if idx>1:
-                print "T%i = %g mK"%((idx-1),T)
+                print("T%i = %g mK"%((idx-1),T))
         # save results
         for idx,fitter in enumerate(self.fitters):
             fitter.R_T_multi = self.xopt[0][0]
@@ -134,7 +134,7 @@ class CBT_multi_fitter():
                 G.append(calc_G(fitter.sigma,fitter.N,V,R_T,C_sigma,T_p,fitter.island_size,
                                 fitter.const_P,eps=fitter.excitation))
             res = res+sum((array(fitter.meas_G)-array(G))**2)*1e10
-            print "Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,res)
+            print("Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,res))
         return res
 
     def fit_function_pool(self,x):
@@ -154,7 +154,7 @@ class CBT_multi_fitter():
                 return res
             G = pool.map(G_func_local, fitter.meas_V)
             res = res+sum((array(fitter.meas_G)-array(G))**2)*1e10
-            print "Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,res)
+            print("Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,res))
         return res
 
     def fit_function_multiprocessing(self,x):
@@ -180,7 +180,7 @@ class CBT_multi_fitter():
         total_error=0.0
         for error in values:
             total_error = total_error + error.value
-            print "error:%g"%error.value
+            print("error:%g"%error.value)
         return total_error
 
     def fit_G_worker(self,idx,fitter,R_T,C_sigma,T_p,result_error):
@@ -193,7 +193,7 @@ class CBT_multi_fitter():
             G.append(calc_G(fitter.sigma,fitter.N,V,R_T,C_sigma,T_p,fitter.island_size,
                         fitter.const_P,eps=fitter.excitation))
         result_error.value = sum((array(fitter.meas_G)-array(G))**2)*1e10
-        print "Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,result_error.value)
+        print("Idx:%g,Rt:%g Csigma:%g Tp:%g res:%g"%(idx,R_T,C_sigma,T_p,result_error.value))
         return
 
 
@@ -209,16 +209,16 @@ class CBT_multi_fitter():
         Prints fit results, original and multi
         """
         fo = open(result_file, "wb")
-        print "===================="
-        print "     Final results  "
+        print("====================")
+        print("     Final results  ")
         for idx,fitter in enumerate(self.fitters):
-            print "file:%s"%fitter.filename
+            print("file:%s"%fitter.filename)
             fo.write("file:%s \n"%fitter.filename)
-            print "R_T(0):%g R_T(multi):%g"%(fitter.R_T,fitter.R_T_multi)
+            print("R_T(0):%g R_T(multi):%g"%(fitter.R_T,fitter.R_T_multi))
             fo.write("R_T(0):%g R_T(multi):%g \n"%(fitter.R_T,fitter.R_T_multi))
-            print "C_sigma(0):%g C_sigma(multi):%g"%(fitter.C_sigma,fitter.C_sigma_multi)
+            print("C_sigma(0):%g C_sigma(multi):%g"%(fitter.C_sigma,fitter.C_sigma_multi))
             fo.write("C_sigma(0):%g C_sigma(multi):%g \n"%(fitter.C_sigma,fitter.C_sigma_multi))
-            print "T(0):%g T(multi):%g"%(fitter.T_fit,fitter.T_multi)
+            print("T(0):%g T(multi):%g"%(fitter.T_fit,fitter.T_multi))
             fo.write("T(0):%g T(multi):%g \n"%(fitter.T_fit,fitter.T_multi))
 
         # Open a file

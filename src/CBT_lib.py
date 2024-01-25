@@ -81,17 +81,17 @@ def calc_current_1(V,T,R_T,C_sigma):
                 ref_curr = sigma[0]*(gamma1plus(0,V,T,R_T,C_sigma)-gamma1minus(0,V,T,R_T,C_sigma))
             if n>1:
                 current_curr = sigma[n]*(gamma1plus(n,V,T,R_T,C_sigma)-gamma1minus(n,V,T,R_T,C_sigma))
-                print sigma                
-                print "N:%g current_curr:%g ref_curr:%g"%(n,current_curr,ref_curr)                
+                print(sigma)                
+                print("N:%g current_curr:%g ref_curr:%g"%(n,current_curr,ref_curr))                
                 if abs(current_curr/ref_curr)<1e-10: # criteria for stopping calculation
                     stop_calculation=True
-                    print "stopped calculation at n = %g"%n
+                    print("stopped calculation at n = %g"%n)
             if False: # for debug
-                print "------N = %i------"%n
-                print gamma1plus(n,V,T,R_T,C_sigma)
-                print gamma1minus(n,V,T,R_T,C_sigma)
-                print gamma2plus(n,V,T,R_T,C_sigma)
-                print gamma2minus(n,V,T,R_T,C_sigma)
+                print("------N = %i------"%n)
+                print(gamma1plus(n,V,T,R_T,C_sigma))
+                print(gamma1minus(n,V,T,R_T,C_sigma))
+                print(gamma2plus(n,V,T,R_T,C_sigma))
+                print(gamma2minus(n,V,T,R_T,C_sigma))
         sigma_sum = sigma[0]+2*sum(sigma[1:])
     #print sigma_sum
     sigma=sigma/sigma_sum
@@ -138,11 +138,11 @@ def calc_current(V,T,R_T,C_sigma):
             #print abs((abs(current_curr_plus+current_curr_minus))/ref_curr)
             #print n
             if False: # for debug
-                print "------N = %i------"%n
-                print gamma1plus(n,V,T,R_T,C_sigma)
-                print gamma1minus(n,V,T,R_T,C_sigma)
-                print gamma2plus(n,V,T,R_T,C_sigma)
-                print gamma2minus(n,V,T,R_T,C_sigma)
+                print("------N = %i------"%n)
+                print(gamma1plus(n,V,T,R_T,C_sigma))
+                print(gamma1minus(n,V,T,R_T,C_sigma))
+                print(gamma2plus(n,V,T,R_T,C_sigma))
+                print(gamma2minus(n,V,T,R_T,C_sigma))
 
             current += current_curr_plus + current_curr_minus
     sigma_sum = sigma[0]+2*sum(sigma[1:])
@@ -175,9 +175,9 @@ def calc_current_full(sigma,N,V,R_T,C_sigma,T_p,island_volume,const_P=0.1e-15):
     #T_e = (1*(V/N)**2/(R_T*sigma*island_volume)+T_p**5.0)**(1.0/5.0)
     T_e = (P_per_junc/(sigma*island_volume)+T_p**5.0)**(1.0/5.0)
     if False:
-        print "V %g"%V
-        print "T_e %g"%T_e
-        print "T_p %g"%T_p
+        print("V %g"%V)
+        print("T_e %g"%T_e)
+        print("T_p %g"%T_p)
 #>>>>>>> .r1091
     #print "T_e = %g"%T_e
     current = calc_current(V/(N/2.0),T_e,R_T,C_sigma)

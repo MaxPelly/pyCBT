@@ -85,4 +85,4 @@ multi_fitter = CBT_multi_fitter(fitters,
 cc = CBT_plot_data_pyx(fitters)
 cc.plot_multi_data(filename=result_pdf_1)
 cc.plot_data(filename=result_pdf_2)
-print "it took", time.time() - start, "seconds."
+print("it took", time.time() - start, "seconds.")

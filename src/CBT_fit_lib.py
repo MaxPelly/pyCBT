@@ -17,6 +17,7 @@ from CBT_lib import *
 from copy import *
 import time
 
+time.clock = time.perf_counter
 
 N=2
 
@@ -42,7 +43,7 @@ class CBT_fitter():
         self.sigma =sigma
         self.n_max=n_max
         if N != None:
-            print "N is obsolete"
+            print("N is obsolete")
         #self.N=N # 23.5.14 LRR
         self.N=2
         self.v_offset=0.0
@@ -75,13 +76,13 @@ class CBT_fitter():
         self.full_curve_fitted = False        
         self.v_offset =0.0
 
-    def find_offset(self,points=None):
+    def find_offset(self,points=None, offset=0):
         """
         finds offset voltage
         """
         #find minimum conductance
         G = array(self.meas_G)
-        min_G_idx = G.argmin()
+        min_G_idx = G.argmin() + offset
         if points==None:
             num_points = G.size/10
         else:
@@ -94,7 +95,7 @@ class CBT_fitter():
             max_idx = G.size
         #print "min_idx:%g"%min_idx
         #print "max_idx:%g"%max_idx
-        indices = range(min_idx,max_idx+1)
+        indices = list(range(min_idx,max_idx+1))
         self.offset_data={}
         self.offset_data['x'] = x = array(self.meas_V[indices])
         self.offset_data['y'] = y = array(self.meas_G[indices])
@@ -102,9 +103,9 @@ class CBT_fitter():
         self.offset_data['p'] = p = poly1d(z)   # build the resulting second degree polynomial 
         self.offset_data['y2'] = p(x)
         self.v_offset = -z[1]/(2.0*z[0])   # offset evaluation (position of the minimum of the parabola)
-        print "============================================"     
-        print " Calculated Voltage Offset = %g"%self.v_offset
-        print "============================================"     
+        print("============================================")     
+        print(" Calculated Voltage Offset = %g"%self.v_offset)
+        print("============================================")     
         self.meas_V = self.meas_V-self.v_offset
 
     def print_offset_curve(self):
@@ -124,30 +125,30 @@ class CBT_fitter():
 
     def print_elapset_time(self):
         toc = time.clock()
-        print "It has taken %g seconds = %g minutes"%(toc-self.tic,(toc-self.tic)/60.0)
+        print("It has taken %g seconds = %g minutes"%(toc-self.tic,(toc-self.tic)/60.0))
 
     def fit_classic_curve(self):
         # initial values for "classic" curve fit                        
         p0=[1.0/(self.R_tunnel_init),self.T_init,self.TEC_init]
-        print "================================================="     
-        print "==============  Starting Values   ==============="     
-        print "================================================="     
-        print "Rt_init: %g KOhm T_init: %g mK E_C_init: %g mK"%(1.0/p0[0],p0[1]*1e3,p0[2]*1e3)  # 23.05.14  ADM
-        print "================================================="     
+        print("=================================================")     
+        print("==============  Starting Values   ===============")     
+        print("=================================================")     
+        print("Rt_init: %g KOhm T_init: %g mK E_C_init: %g mK"%(1.0/p0[0],p0[1]*1e3,p0[2]*1e3))  # 23.05.14  ADM
+        print("=================================================")     
         # initial optimization
         self.plsq = optimize.fmin_bfgs(self.residuals1, p0, args=(self.meas_G,self.meas_V),
                                                 gtol=1e-6, full_output=1,maxiter=50,
                                                 callback=self.call_func)
-        print "========================================="     
-        print "====== After initial optimization: ======"     
-        print "========================================="     
+        print("=========================================")     
+        print("====== After initial optimization: ======")     
+        print("=========================================")     
         #print "R_T = %g kOhm"%(1.0/(plsq[0][0]*self.N))  # OLD # 23.05.14  ADM
-        print "R_T = %g kOhm"%(1.0/(self.plsq[0][0]))  # NEW  # tunnel resistance of the single junction
-        print "R_T_arrays = %g kOhm"%((1.0/self.plsq[0][0])*self.junctions_in_series/self.parallel_arrays)  # NEW # tunnel resistance of the array
-        print "T = %g mK"%(self.plsq[0][1]*1000.0)
+        print("R_T = %g kOhm"%(1.0/(self.plsq[0][0])))  # NEW  # tunnel resistance of the single junction
+        print("R_T_arrays = %g kOhm"%((1.0/self.plsq[0][0])*self.junctions_in_series/self.parallel_arrays))  # NEW # tunnel resistance of the array
+        print("T = %g mK"%(self.plsq[0][1]*1000.0))
         #print "Ec = %g mK"%(self.plsq[0][2]*(N-1.0)/self.N*1000) # OLD # 28.05.14  ADM
-        print "Ec = %g mK"%(self.plsq[0][2]/2*1000)  # NEW  # charging energy of the single island
-        print "Csigma = %g fF"%(e**2/(self.plsq[0][2]*k)*1e15)
+        print("Ec = %g mK"%(self.plsq[0][2]/2*1000))  # NEW  # charging energy of the single island
+        print("Csigma = %g fF"%(e**2/(self.plsq[0][2]*k)*1e15))
         self.classic_curve_fitted = True
 
     def fit_full_curve(self):
@@ -169,12 +170,12 @@ class CBT_fitter():
             "Print optimizing with bounds"
             self.xopt1 = optimize.fmin_l_bfgs_b(self.optimize_1, x1, factr=1e7, approx_grad=True, bounds=self.bounds)
         toc = time.clock()
-        print "=========================================="     
-        print "======   After main optimization:   ======"  
-        print "=========================================="     # 28.05.14  ADM
-        print "R_T = %g"%(self.xopt1[0][0])
-        print "T = %g mK"%(self.xopt1[0][2])
-        print "C_sigma = %g "%(self.xopt1[0][1])
+        print("==========================================")     
+        print("======   After main optimization:   ======")  
+        print("==========================================")     # 28.05.14  ADM
+        print("R_T = %g"%(self.xopt1[0][0]))
+        print("T = %g mK"%(self.xopt1[0][2]))
+        print("C_sigma = %g "%(self.xopt1[0][1]))
         self.full_curve_fitted = True
         self.T_fit = self.xopt1[0][2]
         self.R_T = self.xopt1[0][0]
@@ -265,7 +266,7 @@ class CBT_fitter():
 
     
     def call_func(self,x): 
-        print x
+        print(x)
 
     # Full optimization
 
@@ -283,7 +284,7 @@ class CBT_fitter():
             G.append(calc_G(self.sigma,self.N,V,R_T,C_sigma,T_p,self.island_size,
                             self.const_P,eps=self.excitation))
         res = sum((array(self.meas_G)-array(G))**2)*1e10
-        print "Rt: %g Csigma: %g Tp: %g res: %g"%(R_T,C_sigma,T_p,res)
+        print("Rt: %g Csigma: %g Tp: %g res: %g"%(R_T,C_sigma,T_p,res))
         return res
 
     def peval_1(self,meas_V,x):
