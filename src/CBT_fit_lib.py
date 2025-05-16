@@ -154,11 +154,13 @@ class CBT_fitter():
     def fit_full_curve(self):
         # main optimization
         if self.classic_curve_fitted==True:
+            print("Using pr fitted values")
             #R_T_init = (1.0/(self.plsq[0][0]*self.N))  # OLD  # 23.05.14  ADM
             R_T_init = (1.0/(self.plsq[0][0]))  # NEW  # tunnel resistance of the single junction
             C_sigma_init=e**2/(self.plsq[0][2]*k)*1e15
             T_p_init = self.plsq[0][1]*1e3
         else:
+            print("Using initial guess")
             R_T_init = self.R_tunnel_init
             C_sigma_init = e**2/(self.TEC_init*k)*1e15
             T_p_init = self.T_init*1e3
@@ -167,7 +169,7 @@ class CBT_fitter():
         if self.bounds == None:
             self.xopt1 = optimize.fmin_bfgs(self.optimize_1, x1, gtol=1e-3,full_output=1, disp=1,callback=self.call_func)
         else:
-            "Print optimizing with bounds"
+            print("Optimizing with bounds")
             self.xopt1 = optimize.fmin_l_bfgs_b(self.optimize_1, x1, factr=1e7, approx_grad=True, bounds=self.bounds)
         toc = time.clock()
         print("==========================================")     
